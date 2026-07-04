@@ -1,105 +1,57 @@
-# VICTORIA -
-un aplicativo informático que permita administrar, publicar y calificar guías y materiales del SENA en un solo lugar, asegurando que tanto instructores como aprendices gestionen sus portafolios de forma organizada y bajo las mismas reglas.
+//////////////////////////////////
+NOTA DE LA CORRECCION (leer antes de correr el proyecto)
+//////////////////////////////////
 
-Proyecto VICTORIA: Sistema de Repositorio Pedagógico Integral
-VICTORIA es una plataforma de software diseñada específicamente para el entorno académico del SENA. Actúa como un repositorio centralizado y un sistema de gestión educativa que conecta la administración de contenidos con el flujo de evaluación.
+Este proyecto fue auditado y corregido. Pasos para dejarlo funcionando:
 
- -Objetivo Principal
-Proveer una solución tecnológica escalable que elimine la dispersión de documentos, permitiendo centralizar la administración, distribución y resguardo de materiales pedagógicos (como las guías de aprendizaje). A su vez, busca optimizar drásticamente el flujo de trabajo de los instructores, estandarizando los procesos de evaluación y calificación mediante un entorno digital ágil.
+1. Crea tu entorno virtual y activalo (paso 1 y 2 de abajo, sin cambios).
+2. Instala TODAS las dependencias de una sola vez con:
+     pip install -r requirements.txt
+   (requirements.txt ya viene limpio: se quito "dotenv" -que chocaba con
+   "python-dotenv"- y "PyMySQL" -que no se usa, la base es PostgreSQL-, y
+   se agregaron "python-jose" y "python-multipart", que el proyecto
+   necesita para JWT y para el formulario de login pero nunca habian
+   quedado registrados en el archivo.)
+3. Revisa tu archivo .env: ahora, ademas de DATABASE_URL, DEBE tener
+   SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES y ALLOWED_ORIGINS.
+   Sin estas variables el servidor ya NO arranca (a proposito: es una
+   falla segura para que nunca corra con configuracion insegura).
+4. Corre las migraciones de Alembic (pasos 8-9 de abajo). El archivo
+   alembic/env.py tenia un import roto que impedia ejecutar CUALQUIER
+   comando de alembic; ya esta corregido.
+5. uvicorn main:app --reload
 
-⚙️ Funcionalidades y Procesos Clave
-El sistema se divide en procesos específicos orientados a cubrir las necesidades tanto del almacenamiento como de la interacción académica:
+//////////////////////////////////
+SENTENCIAS
+/////////////////////////////////
 
-Gestión y Publicación de Contenidos:
-Proceso de carga y catalogación de guías de aprendizaje y materiales didácticos.
-Validación estricta de la información de entrada mediante Pydantic antes de ser procesada por el servidor, asegurando la integridad de los datos.
-Módulo de Evaluación y Calificación:
-Herramientas dedicadas para cuentas con roles específicos (como la cuenta instructorsena53), permitiendo revisar entregas, realizar seguimiento y emitir calificaciones directamente en la plataforma.
-Gestión de Base de Datos Relacional:
-Almacenamiento estructurado de usuarios, materiales y calificaciones utilizando PostgreSQL.
-Mapeo y consultas seguras a través de SQLAlchemy, garantizando que las relaciones entre instructores, aprendices y documentos se mantengan consistentes.
 
--Enfoque de Desarrollo y Arquitectura
-El desarrollo de VICTORIA se plantea bajo una arquitectura moderna y estructurada, garantizando que el sistema pueda crecer y mantenerse a largo plazo:
+1 . python -m venv venv                                                                                                    
+2 . .\venv\Scripts\activate                                                                                                
+4 . pip install fastapi uvicorn                                                                                         .
+5 . pip install sqlalchemy pymysql dotenv  * // si hay un error con la terminal o apesar de que las bibliotecas estan instaldas entonces contr shitf p  Python: Select Interpreter
+6 . pip install pydantic-settings
+7 . pip freeze > requirements.txt                 
+8 . pip install psycopg2-binary
+10 . pip install python-multipart
+python -c "import secrets; print(secrets.token_hex(32))"
+env\Scripts\python -m pip install "python-jose[cryptography]" python-multipart python-dotenv  si no funciona esta    -  python -m pip install "python-jose[cryptography]" python-multipart python-dotenv
+9 . pip install alembic   */Antes de  se verifica que el archivo .env tenga la url correcta con el nombre de la base de datos 
+                            junto con la creacion de las tablas , relaciones para evitar fallas .
+-- alembic init alembic
+-- alembic revision --autogenerate -m "primera migracion"
+-- alembic upgrade head
 
--Backend de Alto Rendimiento: Construido sobre Python y FastAPI, lo que garantiza respuestas rápidas y la creación de una API robusta para la comunicación de datos.
-Patrones de Diseño de Software: Para resolver problemas complejos de estructura y flujo de datos, el desarrollo integra patrones de diseño como Adapter (para compatibilizar diferentes interfaces o fuentes de datos) y Chain of Responsibility (para delegar la lógica de procesamiento y validación de peticiones de manera secuencial).
+uvicorn main:app --reload   /// si hay error por gmaill-   pip install email-validator **// otrra alternativa  uvicorn main:app --reload --port 8001
 
--Flujo UI/UX Iterativo: El desarrollo visual comienza con la creación de wireframes y prototipos en Figma (respetando la identidad visual, como el característico verde del logo del SENA). Posteriormente, estas interfaces se maquetan utilizando HTML5, CSS3 y Bootstrap, construyendo formularios web estéticos y completamente responsivos.
+*/ si hay un error por archivos antiguos  Get-ChildItem -Path . -Filter "__pycache__" -Recurse -Directory | Remove-Item -Recurse -Force
 
-///el stack tecnológico actual///
+////////////////////////
+SENTENCIAS AUXILIARES 
+////////////////////////
 
-💻-Backend y Lógica de Negocio
-Lenguaje principal: Python
-Framework API: FastAPI (para la creación de servicios web ágiles y de alto rendimiento)
-Validación de datos: Pydantic (control de esquemas y reglas de negocio)
-Patrones de diseño: Implementación de patrones estructurales y de comportamiento como Adapter y Chain of Responsibility.
+pip freeze  */Para ver qué librerías tienes instaladas por si se tiene una con una version no deseada 
+pip install --no-cache-dir -r requirements.txt  
 
-- Base de Datos y Persistencia
-Motor de base de datos: PostgreSQL
-ORM (Mapeo Objeto-Relacional): SQLAlchemy (para la gestión y mapeo de las tablas relacionales)
-Herramientas de soporte local: XAMPP y MySQL Workbench (utilizados para la administración de servicios y conexiones en el entorno local)
 
-- Frontend y Diseño UI/UX
-Prototipado y maquetación: Figma (diseño de wireframes e interfaces de usuario)
-Estructura y estilos base: HTML5 y CSS3
-Famework CSS: Bootstrap (para el diseño responsivo de formularios y componentes de la interfaz)
-
-- Herramientas de Desarrollo y Entorno
-Editor de código: Visual Studio Code (VS Code)
-
-Gestión de entornos virtuales: Herramientas nativas de Python (venv) combinadas con PowerShell para la activación y ejecución de scripts.
-
-///cómo ejecutar el código Python ///
-
-Paso 1: Abrir el proyecto en Visual Studio Code
-Abre Visual Studio Code.
-Selecciona File > Open Folder (Archivo > Abrir carpeta) y elige la carpeta de tu proyecto victoria.
-Abre una nueva terminal integrada dentro de VS Code (Ctrl + Ñ o Terminal > New Terminal).
-
-Paso 2: Activar el Entorno Virtual (Python venv)
-Como estamos utilizando un entorno virtual para aislar las dependencias y configuramos previamente la directiva de seguridad en PowerShell para evitar el error PSSecurityException, ejecuta el comando según tu sistema operativo en la terminal:
-
-En Windows (PowerShell / CMD):
-
-PowerShell
-.\venv\Scripts\activate
-(Sabrás que funcionó porque verás (venv) al inicio de la línea de comandos en tu terminal).
-
-En macOS / Linux:
-
-Bash
-source venv/bin/activate
-Paso 3: Asegurar las Dependencias Instaladas
-Para verificar que tienes FastAPI, SQLAlchemy, Pydantic y el conector de PostgreSQL listos, ejecuta:
-
-Bash
-pip install -r requirements.txt
-(Si ya están instalados, la terminal te indicará que ya se cumplen los requisitos).
-
-Paso 4: Levantar la Base de Datos (PostgreSQL)
-Antes de iniciar el código Python, asegúrate de que tu servicio de base de datos esté activo:
-Inicia tu servidor local de PostgreSQL (comprobando su estado en tus herramientas de administración local).
-Verifica que las variables de entorno o la cadena de conexión en tu código reflejen correctamente tu DB_USER y contraseña para que SQLAlchemy pueda conectarse sin problemas de autenticación.
-
-Paso 5: Ejecutar el Servidor de FastAPI con Uvicorn
-Con el entorno activo y la base de datos corriendo, inicia el servidor de desarrollo ejecutando el siguiente comando en la terminal:
-
-Bash
-uvicorn main:app --reload
-¿Cómo verificar que todo está corriendo bien?
-Una vez ejecutes el comando anterior, la terminal te mostrará unas líneas de texto indicando que el servidor está encendido. Podrás acceder a la aplicación desde tu navegador a través de estas direcciones:
-
-Aplicación principal: http://127.0.0.1:8000
-
-Documentación interactiva de la API (Swagger UI): http://127.0.0.1:8000/docs (Aquí podrás probar directamente las rutas y validaciones de Pydantic que tiene el proyecto).
-
-/// cómo visualizar los prototipos HTML///
-
-Con el servidor corriendo, el navegador web cargará el HTML junto con todos sus estilos CSS y Bootstrap de forma automática. No uses extensiones como Live Server. Abre tu navegador e ingresa a:
-
-Para interactuar con el sistema (Dashboard / Formularios con diseño completo):
-Ingresa a: http://127.0.0.1:8000/dashboard (o la ruta específica que configure el backend para la vista).
-
-Para revisar y probar las rutas de la API (Swagger UI):
-Ingresa a: http://127.0.0.1:8000/docs
+si por algun motivo no recuerda la contraseña de admi ejecuta en la base de datos esto DELETE FROM usuario WHERE numero_documento = '//aqui va el numero de documento';
